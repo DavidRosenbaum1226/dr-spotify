@@ -1,0 +1,1 @@
+Dr. Spotify is DR's (David Rosenbaum's) personal web app for working with Spotify
