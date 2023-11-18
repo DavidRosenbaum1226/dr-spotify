@@ -1,4 +1,4 @@
-const CLIENT_ID = "6d20d69320624236b7bf5ab52a530966";
+// const CLIENT_ID = "6d20d69320624236b7bf5ab52a530966";
 const REDIRECT_URL = "http://localhost:5173/callback";
 
 export async function redirectToAuthCodeFlow(clientId: string) {
