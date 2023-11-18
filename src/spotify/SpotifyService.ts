@@ -1,5 +1,26 @@
+const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
 // const CLIENT_ID = "6d20d69320624236b7bf5ab52a530966";
 const REDIRECT_URL = "http://localhost:5173/callback";
+
+export const getProfile = async (token: string) => {
+  try {
+    const response = await fetch(`${SPOTIFY_API_BASE_URL}/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    throw error;
+  }
+};
 
 export async function redirectToAuthCodeFlow(clientId: string) {
     const verifier = generateCodeVerifier(128);
