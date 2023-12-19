@@ -1,6 +1,7 @@
 const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
-// const CLIENT_ID = "6d20d69320624236b7bf5ab52a530966";
-const REDIRECT_URL = "http://localhost:5173/callback";
+export const SPOTIFY_AUTHORIZE_URL = 'https://accounts.spotify.com/authorize';
+export const CLIENT_ID = "6d20d69320624236b7bf5ab52a530966";
+export const REDIRECT_URL = "http://localhost:5173/login-callback";
 
 export const getProfile = async (token: string) => {
   try {
@@ -23,20 +24,21 @@ export const getProfile = async (token: string) => {
 };
 
 export async function redirectToAuthCodeFlow(clientId: string) {
-    const verifier = generateCodeVerifier(128);
-    const challenge = await generateCodeChallenge(verifier);
+  const verifier = generateCodeVerifier(128);
+  const challenge = await generateCodeChallenge(verifier);
 
-    localStorage.setItem("verifier", verifier);
+  localStorage.setItem("verifier", verifier);
 
-    const params = new URLSearchParams();
-    params.append("client_id", clientId);
-    params.append("response_type", "code");
-    params.append("redirect_uri", REDIRECT_URL);
-    params.append("scope", "user-read-private user-read-email");
-    params.append("code_challenge_method", "S256");
-    params.append("code_challenge", challenge);
+  const params = new URLSearchParams({
+    client_id: clientId,
+    response_type: "code",
+    redirect_uri: REDIRECT_URL,
+    scope: "user-read-private user-read-email",
+    code_challenge_method: "S256",
+    code_challenge: challenge
+  });
 
-    document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
+  document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
 }
 
 export async function getAccessToken(clientId: string, code: string) {
@@ -89,14 +91,6 @@ async function generateCodeChallenge(codeVerifier: string) {
 //         const profile = await fetchProfile(accessToken);
 //         populateUI(profile);
 //     }
-// }
-
-// async function fetchProfile(code: string): Promise<UserProfile> {
-//     const result = await fetch("https://api.spotify.com/v1/me", {
-//         method: "GET", headers: { Authorization: `Bearer ${code}` }
-//     });
-
-//     return await result.json();
 // }
 
 // function populateUI(profile: UserProfile) {
