@@ -1,6 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state'
-import { SPOTIFY_AUTHORIZE_URL, SPOTIFY_REDIRECT_URL, SPOTIFY_CLIENT_ID, generateCodeVerifier, generateCodeChallenge, getAccessToken, getUserProfile } from './spotify/SpotifyService';
+import {
+  SPOTIFY_AUTHORIZE_URL,
+  SPOTIFY_REDIRECT_URL,
+  SPOTIFY_CLIENT_ID,
+  generateCodeVerifier,
+  generateCodeChallenge,
+  getAccessToken,
+  getUserProfile
+} from './spotify/SpotifyService';
 
 const App: React.FC = () => {
   console.log('App render');
@@ -11,6 +19,35 @@ const App: React.FC = () => {
 
   // If no access token is present, redirect to Spotify login with PKCE parameters
   if (!accessToken) {
+    redirectToSpotifyAuthorizationUrl();
+  }
+
+  // If being redirected back from Spotify with a code, fetch the access token
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code");
+  console.log('code: ', code);
+  if (code) {
+    getAccessToken(SPOTIFY_CLIENT_ID, code, codeVerifier)
+      .then((data) => setAccessToken(data.access_token))
+      .catch((error) => console.error('Error fetching access token: ', error));
+  }
+
+  if (accessToken && !userProfile) {
+    getUserProfile(accessToken)
+      .then((data) => setUserProfile(data))
+      .catch((error) => {
+        console.error('Error fetching profile: ', error);
+        redirectToSpotifyAuthorizationUrl()
+      });
+  }
+
+  return (
+    <div>
+      <h2>User name: {userProfile?.display_name}</h2>
+    </div>
+  );
+
+  function redirectToSpotifyAuthorizationUrl() {
     const verifier = generateCodeVerifier();
     generateCodeChallenge(verifier).then((codeChallenge) => {
       setCodeVerifier(verifier);
@@ -25,29 +62,6 @@ const App: React.FC = () => {
       window.location.href = `${SPOTIFY_AUTHORIZE_URL}?${params.toString()}`;
     });
   }
-
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get("code");
-  console.log('code: ', code);
-  if (code) {
-    getAccessToken(SPOTIFY_CLIENT_ID, code, codeVerifier)
-      .then((data) => setAccessToken(data.access_token))
-      .catch((error) => console.error('Error fetching access token: ', error));
-  }
-
-  useEffect(() => {
-    if (accessToken) {
-      getUserProfile(accessToken)
-        .then((data) => setUserProfile(data))
-        .catch((error) => console.error('Error fetching profile:', error));
-    }
-  }, [accessToken]);
-
-  return (
-    <div>
-      <h2>User name: {userProfile?.display_name}</h2>
-    </div>
-  );
 };
 
 export default App;
