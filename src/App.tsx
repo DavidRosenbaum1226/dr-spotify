@@ -1,92 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { getProfile, CLIENT_ID, REDIRECT_URL, SPOTIFY_AUTHORIZE_URL } from './spotify/SpotifyService';
-
-const generateRandomString = (length: number): string => {
-  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * charset.length);
-    result += charset.charAt(randomIndex);
-  }
-  return result;
-};
-
-const generateCodeVerifier = (): string => {
-  return generateRandomString(128);
-};
-
-const generateCodeChallenge = (codeVerifier: string): Promise<string> => {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(codeVerifier);
-  const hashed = window.crypto.subtle.digest('SHA-256', data);
-  return new Promise<string>((resolve) => {
-    hashed.then((arrayBuffer) => {
-      const byteArray = new Uint8Array(arrayBuffer);
-      const codeChallenge = btoa(String.fromCharCode.apply(null, Array.from(byteArray)));
-      resolve(codeChallenge.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_'));
-    });
-  });
-};
+import React, { useEffect, useState } from 'react';
+import useLocalStorageState from 'use-local-storage-state'
+import { SPOTIFY_AUTHORIZE_URL, SPOTIFY_REDIRECT_URL, SPOTIFY_CLIENT_ID, generateCodeVerifier, generateCodeChallenge, getAccessToken, getUserProfile } from './spotify/SpotifyService';
 
 const App: React.FC = () => {
-  const [, setCodeVerifier] = useState<string>('');
-  const [codeChallenge, setCodeChallenge] = useState<string>('');
-  const [token, setToken] = useState<string | null>(null);
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const location = useLocation();
+  console.log('App render');
 
-  useEffect(() => {
+  const [codeVerifier, setCodeVerifier] = useLocalStorageState<string>('verifier', { defaultValue: '' });
+  const [accessToken, setAccessToken] = useLocalStorageState<string | null>('token', { defaultValue: null });
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+
+  // If no access token is present, redirect to Spotify login with PKCE parameters
+  if (!accessToken) {
     const verifier = generateCodeVerifier();
-    generateCodeChallenge(verifier).then((challenge) => {
+    generateCodeChallenge(verifier).then((codeChallenge) => {
       setCodeVerifier(verifier);
-      setCodeChallenge(challenge);
-    });
-  }, []);
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const urlToken = urlParams.get('token');
-
-    if (urlToken) {
-      setToken(urlToken);
-    } else {
-      // If no token is present, redirect to Spotify login with PKCE parameters
       const params = new URLSearchParams({
-        client_id: CLIENT_ID,
+        client_id: SPOTIFY_CLIENT_ID,
         response_type: "code",
-        redirect_uri: REDIRECT_URL,
+        redirect_uri: SPOTIFY_REDIRECT_URL,
         scope: "user-read-private user-read-email",
         code_challenge_method: "S256",
         code_challenge: codeChallenge
       });
       window.location.href = `${SPOTIFY_AUTHORIZE_URL}?${params.toString()}`;
-    }
-  }, [location.search, codeChallenge]);
+    });
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code");
+  console.log('code: ', code);
+  if (code) {
+    getAccessToken(SPOTIFY_CLIENT_ID, code, codeVerifier)
+      .then((data) => setAccessToken(data.access_token))
+      .catch((error) => console.error('Error fetching access token: ', error));
+  }
 
   useEffect(() => {
-    if (token) {
-      getProfile(token)
-        .then((data) => setProfile(data))
+    if (accessToken) {
+      getUserProfile(accessToken)
+        .then((data) => setUserProfile(data))
         .catch((error) => console.error('Error fetching profile:', error));
     }
-  }, [token]);
+  }, [accessToken]);
 
   return (
     <div>
-      <h1>Spotify Profile</h1>
-      {!token ? (
-        // Link to Spotify login with necessary parameters for callback
-        <Link to={`/login-callback${location.search}`}>Login to Spotify</Link>
-      ) : profile ? (
-        <div>
-          <h2>Welcome, {profile.display_name}!</h2>
-          <p>Email: {profile.email}</p>
-          {/* Add more profile information as needed */}
-        </div>
-      ) : (
-        <p>Loading...</p>
-      )}
+      <h2>User name: {userProfile?.display_name}</h2>
     </div>
   );
 };
