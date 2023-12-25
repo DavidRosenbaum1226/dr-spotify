@@ -8,15 +8,15 @@ const FETCH_ACCESS_TOKEN_URL = AUTHORIZATION_BASE_URL + '/api/token';
 const API_BASE_URL = 'https://api.spotify.com/v1';
 const FETCH_USER_PROFILE_URL = API_BASE_URL + '/me';
 
-export function logInfo() {
+export const logInfo = (): void => {
   console.log('CLIENT_ID: ', CLIENT_ID);
   console.log('REDIRECT_URL: ', REDIRECT_URL);
   console.log('AUTHORIZE_URL: ', AUTHORIZE_URL)
   console.log('FETCH_ACCESS_TOKEN_URL: ', FETCH_ACCESS_TOKEN_URL);
   console.log('FETCH_USER_PROFILE_URL: ', FETCH_USER_PROFILE_URL);
-}
+};
 
-export function redirectToSpotifyAuthorizeUrl(setCodeVerifier: React.Dispatch<React.SetStateAction<string>>) {
+export const redirectToSpotifyAuthorizeUrl = (setCodeVerifier: React.Dispatch<React.SetStateAction<string>>): void => {
   const verifier = generateCodeVerifier();
   generateCodeChallenge(verifier).then((codeChallenge) => {
     setCodeVerifier(verifier);
@@ -59,7 +59,7 @@ const generateCodeChallenge = (codeVerifier: string): Promise<string> => {
   });
 };
 
-export async function fetchAccessToken(code: string, codeVerifier: string) {
+export const fetchAccessToken = async (code: string, codeVerifier: string) => {
   const params = {
     client_id: CLIENT_ID,
     grant_type: "authorization_code",
@@ -87,13 +87,13 @@ export const fetchUserProfile = async (token: string) => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      throw new Error(`HTTP error with status: ${response.status}`);
     }
 
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    console.error('Error fetching profile: ', error);
     throw error;
   }
 };
