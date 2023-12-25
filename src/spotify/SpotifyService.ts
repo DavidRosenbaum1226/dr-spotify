@@ -1,7 +1,36 @@
-const SPOTIFY_API_BASE_URL = 'https://api.spotify.com/v1';
-export const SPOTIFY_AUTHORIZE_URL = 'https://accounts.spotify.com/authorize';
-export const SPOTIFY_REDIRECT_URL = "http://localhost:5173";
-export const SPOTIFY_CLIENT_ID = "6d20d69320624236b7bf5ab52a530966";
+import React from "react";
+
+const CLIENT_ID = "6d20d69320624236b7bf5ab52a530966";
+const REDIRECT_URL = "http://localhost:5173";
+const AUTHORIZATION_BASE_URL = 'https://accounts.spotify.com';
+const AUTHORIZE_URL = AUTHORIZATION_BASE_URL + '/authorize';
+const GET_TOKEN_URL = AUTHORIZATION_BASE_URL + '/api/token';
+const API_BASE_URL = 'https://api.spotify.com/v1';
+const GET_USER_PROFILE_URL = API_BASE_URL + '/me';
+
+export function logInfo() {
+  console.log('CLIENT_ID: ', CLIENT_ID);
+  console.log('REDIRECT_URL: ', REDIRECT_URL);
+  console.log('AUTHORIZE_URL: ', AUTHORIZE_URL)
+  console.log('GET_TOKEN_URL: ', GET_TOKEN_URL);
+  console.log('GET_USER_PROFILE_URL: ', GET_USER_PROFILE_URL);
+}
+
+export function redirectToSpotifyAuthorizationUrl(setCodeVerifier: React.Dispatch<React.SetStateAction<string>>) {
+  const verifier = generateCodeVerifier();
+  generateCodeChallenge(verifier).then((codeChallenge) => {
+    setCodeVerifier(verifier);
+    const params = new URLSearchParams({
+      client_id: CLIENT_ID,
+      response_type: "code",
+      redirect_uri: REDIRECT_URL,
+      scope: "user-read-private user-read-email",
+      code_challenge_method: "S256",
+      code_challenge: codeChallenge
+    });
+    window.location.href = `${AUTHORIZE_URL}?${params.toString()}`;
+  });
+}
 
 const generateRandomString = (length: number): string => {
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -13,11 +42,11 @@ const generateRandomString = (length: number): string => {
   return result;
 };
 
-export const generateCodeVerifier = (): string => {
+const generateCodeVerifier = (): string => {
   return generateRandomString(128);
 };
 
-export const generateCodeChallenge = (codeVerifier: string): Promise<string> => {
+const generateCodeChallenge = (codeVerifier: string): Promise<string> => {
   const encoder = new TextEncoder();
   const data = encoder.encode(codeVerifier);
   const hashed = window.crypto.subtle.digest('SHA-256', data);
@@ -30,16 +59,16 @@ export const generateCodeChallenge = (codeVerifier: string): Promise<string> => 
   });
 };
 
-export async function getAccessToken(clientId: string, code: string, codeVerifier: string) {
+export async function fetchAccessToken(code: string, codeVerifier: string) {
   const params = {
-    client_id: clientId,
+    client_id: CLIENT_ID,
     grant_type: "authorization_code",
     code,
-    redirect_uri: SPOTIFY_REDIRECT_URL,
+    redirect_uri: REDIRECT_URL,
     code_verifier: codeVerifier!,
   };
 
-  const result = await fetch("https://accounts.spotify.com/api/token", {
+  const result = await fetch(GET_TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams(params),
@@ -49,9 +78,9 @@ export async function getAccessToken(clientId: string, code: string, codeVerifie
   return access_token;
 }
 
-export const getUserProfile = async (token: string) => {
+export const fetchUserProfile = async (token: string) => {
   try {
-    const response = await fetch(`${SPOTIFY_API_BASE_URL}/me`, {
+    const response = await fetch(GET_USER_PROFILE_URL, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
