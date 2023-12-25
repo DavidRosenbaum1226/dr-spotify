@@ -12,8 +12,8 @@ export function logInfo() {
   console.log('CLIENT_ID: ', CLIENT_ID);
   console.log('REDIRECT_URL: ', REDIRECT_URL);
   console.log('AUTHORIZE_URL: ', AUTHORIZE_URL)
-  console.log('GET_TOKEN_URL: ', FETCH_ACCESS_TOKEN_URL);
-  console.log('GET_USER_PROFILE_URL: ', FETCH_USER_PROFILE_URL);
+  console.log('FETCH_ACCESS_TOKEN_URL: ', FETCH_ACCESS_TOKEN_URL);
+  console.log('FETCH_USER_PROFILE_URL: ', FETCH_USER_PROFILE_URL);
 }
 
 export function redirectToSpotifyAuthorizeUrl(setCodeVerifier: React.Dispatch<React.SetStateAction<string>>) {
