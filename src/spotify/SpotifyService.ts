@@ -16,7 +16,7 @@ export function logInfo() {
   console.log('GET_USER_PROFILE_URL: ', GET_USER_PROFILE_URL);
 }
 
-export function redirectToSpotifyAuthorizationUrl(setCodeVerifier: React.Dispatch<React.SetStateAction<string>>) {
+export function redirectToSpotifyAuthorizeUrl(setCodeVerifier: React.Dispatch<React.SetStateAction<string>>) {
   const verifier = generateCodeVerifier();
   generateCodeChallenge(verifier).then((codeChallenge) => {
     setCodeVerifier(verifier);
