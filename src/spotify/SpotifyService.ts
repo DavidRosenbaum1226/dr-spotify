@@ -4,16 +4,16 @@ const CLIENT_ID = "6d20d69320624236b7bf5ab52a530966";
 const REDIRECT_URL = "http://localhost:5173";
 const AUTHORIZATION_BASE_URL = 'https://accounts.spotify.com';
 const AUTHORIZE_URL = AUTHORIZATION_BASE_URL + '/authorize';
-const GET_TOKEN_URL = AUTHORIZATION_BASE_URL + '/api/token';
+const FETCH_ACCESS_TOKEN_URL = AUTHORIZATION_BASE_URL + '/api/token';
 const API_BASE_URL = 'https://api.spotify.com/v1';
-const GET_USER_PROFILE_URL = API_BASE_URL + '/me';
+const FETCH_USER_PROFILE_URL = API_BASE_URL + '/me';
 
 export function logInfo() {
   console.log('CLIENT_ID: ', CLIENT_ID);
   console.log('REDIRECT_URL: ', REDIRECT_URL);
   console.log('AUTHORIZE_URL: ', AUTHORIZE_URL)
-  console.log('GET_TOKEN_URL: ', GET_TOKEN_URL);
-  console.log('GET_USER_PROFILE_URL: ', GET_USER_PROFILE_URL);
+  console.log('GET_TOKEN_URL: ', FETCH_ACCESS_TOKEN_URL);
+  console.log('GET_USER_PROFILE_URL: ', FETCH_USER_PROFILE_URL);
 }
 
 export function redirectToSpotifyAuthorizeUrl(setCodeVerifier: React.Dispatch<React.SetStateAction<string>>) {
@@ -68,7 +68,7 @@ export async function fetchAccessToken(code: string, codeVerifier: string) {
     code_verifier: codeVerifier!,
   };
 
-  const result = await fetch(GET_TOKEN_URL, {
+  const result = await fetch(FETCH_ACCESS_TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams(params),
@@ -80,7 +80,7 @@ export async function fetchAccessToken(code: string, codeVerifier: string) {
 
 export const fetchUserProfile = async (token: string) => {
   try {
-    const response = await fetch(GET_USER_PROFILE_URL, {
+    const response = await fetch(FETCH_USER_PROFILE_URL, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
