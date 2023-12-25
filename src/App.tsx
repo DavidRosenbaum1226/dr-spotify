@@ -1,6 +1,6 @@
 import React from 'react';
 import useLocalStorageState from 'use-local-storage-state'
-import { logInfo, redirectToSpotifyAuthorizeUrl, fetchAccessToken } from './spotify/SpotifyService';
+import { logInfo, redirectToSpotifyAuthorizeUrl as redirectToAuthorizeUrl, fetchAccessToken } from './spotify/SpotifyService';
 
 const App: React.FC = () => {
   console.log('App render');
@@ -22,7 +22,7 @@ const App: React.FC = () => {
 
   // If no access token is present, redirect to Spotify login with PKCE parameters
   if (!code && !accessToken) {
-    redirectToSpotifyAuthorizeUrl(setCodeVerifier);
+    redirectToAuthorizeUrl(setCodeVerifier);
   }
 
   // if (accessToken && !userProfile) {
