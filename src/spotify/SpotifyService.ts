@@ -16,10 +16,12 @@ export const logInfo = (): void => {
   console.log('FETCH_USER_PROFILE_URL: ', FETCH_USER_PROFILE_URL);
 };
 
-export const redirectToSpotifyAuthorizeUrl = (setCodeVerifier: React.Dispatch<React.SetStateAction<string>>): void => {
+export const redirectToAuthorizeUrl = (setCodeVerifier: React.Dispatch<React.SetStateAction<string>>): void => {
   const verifier = generateCodeVerifier();
+  setCodeVerifier(verifier);
+  console.log('redirectToSpotifyAuthorizeUrl: verifier: ', verifier);
   generateCodeChallenge(verifier).then((codeChallenge) => {
-    setCodeVerifier(verifier);
+    console.log('redirectToSpotifyAuthorizeUrl: codeChallenge: ', codeChallenge);
     const params = new URLSearchParams({
       client_id: CLIENT_ID,
       response_type: "code",
@@ -28,36 +30,28 @@ export const redirectToSpotifyAuthorizeUrl = (setCodeVerifier: React.Dispatch<Re
       code_challenge_method: "S256",
       code_challenge: codeChallenge
     });
-    window.location.href = `${AUTHORIZE_URL}?${params.toString()}`;
+    // window.location.href = `${AUTHORIZE_URL}?${params.toString()}`;
   });
 }
 
-const generateRandomString = (length: number): string => {
-  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+export const generateCodeVerifier = (length: number): string => {
+  let text = '';
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
   for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * charset.length);
-    result += charset.charAt(randomIndex);
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
-  return result;
+  return text;
 };
 
-const generateCodeVerifier = (): string => {
-  return generateRandomString(128);
-};
-
-const generateCodeChallenge = (codeVerifier: string): Promise<string> => {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(codeVerifier);
-  const hashed = window.crypto.subtle.digest('SHA-256', data);
-  return new Promise<string>((resolve) => {
-    hashed.then((arrayBuffer) => {
-      const byteArray = new Uint8Array(arrayBuffer);
-      const codeChallenge = btoa(String.fromCharCode.apply(null, Array.from(byteArray)));
-      resolve(codeChallenge.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_'));
-    });
-  });
-};
+export const generateCodeChallenge = async (codeVerifier: string) => {
+  const data = new TextEncoder().encode(codeVerifier);
+  const digest = await window.crypto.subtle.digest('SHA-256', data);
+  return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
 
 export const fetchAccessToken = async (code: string, codeVerifier: string) => {
   const params = {
