@@ -1,4 +1,4 @@
-export const CODE_VERIFIER_KEY = "verifier";
+const CODE_VERIFIER_KEY = "verifier";
 export const ACCESS_TOKEN_KEY = "token";
 const CLIENT_ID = "6d20d69320624236b7bf5ab52a530966";
 const REDIRECT_URL = "http://localhost:5173/callback";
