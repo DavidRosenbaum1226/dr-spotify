@@ -8,14 +8,6 @@ const FETCH_ACCESS_TOKEN_URL = AUTHORIZATION_BASE_URL + '/api/token';
 const API_BASE_URL = 'https://api.spotify.com/v1';
 const FETCH_USER_PROFILE_URL = API_BASE_URL + '/me';
 
-export const logInfo = (): void => {
-  console.log('CLIENT_ID: ', CLIENT_ID);
-  console.log('REDIRECT_URL: ', REDIRECT_URL);
-  console.log('AUTHORIZE_URL: ', AUTHORIZE_URL)
-  console.log('FETCH_ACCESS_TOKEN_URL: ', FETCH_ACCESS_TOKEN_URL);
-  console.log('FETCH_USER_PROFILE_URL: ', FETCH_USER_PROFILE_URL);
-};
-
 export const redirectToAuthorizeUrl = (): void => {
   const verifier = generateCodeVerifier(128);
   localStorage.setItem(CODE_VERIFIER_KEY, verifier);
