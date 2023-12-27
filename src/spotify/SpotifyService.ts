@@ -1,7 +1,7 @@
-import React from "react";
-
+export const CODE_VERIFIER_KEY = "verifier";
+export const ACCESS_TOKEN_KEY = "token";
 const CLIENT_ID = "6d20d69320624236b7bf5ab52a530966";
-const REDIRECT_URL = "http://localhost:5173";
+const REDIRECT_URL = "http://localhost:5173/callback";
 const AUTHORIZATION_BASE_URL = 'https://accounts.spotify.com';
 const AUTHORIZE_URL = AUTHORIZATION_BASE_URL + '/authorize';
 const FETCH_ACCESS_TOKEN_URL = AUTHORIZATION_BASE_URL + '/api/token';
@@ -16,35 +16,36 @@ export const logInfo = (): void => {
   console.log('FETCH_USER_PROFILE_URL: ', FETCH_USER_PROFILE_URL);
 };
 
-export const redirectToAuthorizeUrl = (setCodeVerifier: React.Dispatch<React.SetStateAction<string>>): void => {
-  const verifier = generateCodeVerifier();
-  setCodeVerifier(verifier);
-  console.log('redirectToSpotifyAuthorizeUrl: verifier: ', verifier);
-  generateCodeChallenge(verifier).then((codeChallenge) => {
-    console.log('redirectToSpotifyAuthorizeUrl: codeChallenge: ', codeChallenge);
-    const params = new URLSearchParams({
-      client_id: CLIENT_ID,
-      response_type: "code",
-      redirect_uri: REDIRECT_URL,
-      scope: "user-read-private user-read-email",
-      code_challenge_method: "S256",
-      code_challenge: codeChallenge
-    });
-    // window.location.href = `${AUTHORIZE_URL}?${params.toString()}`;
+export const redirectToAuthorizeUrl = (): void => {
+  const verifier = generateCodeVerifier(128);
+  localStorage.setItem(CODE_VERIFIER_KEY, verifier);
+
+  generateCodeChallenge(verifier).then((challenge) => {
+    const params = new URLSearchParams();
+    params.append("client_id", CLIENT_ID);
+    params.append("response_type", "code");
+    params.append("redirect_uri", REDIRECT_URL);
+    params.append("scope", "user-read-private user-read-email");
+    params.append("code_challenge_method", "S256");
+    params.append("code_challenge", challenge);
+
+    document.location = `${AUTHORIZE_URL}?${params.toString()}`;
   });
 }
 
-export const generateCodeVerifier = (length: number): string => {
+const generateCodeVerifier = (length: number): string => {
   let text = '';
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
   for (let i = 0; i < length; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
+
+  console.log('generateCodeVerifier: ', text);
   return text;
 };
 
-export const generateCodeChallenge = async (codeVerifier: string) => {
+const generateCodeChallenge = async (codeVerifier: string) => {
   const data = new TextEncoder().encode(codeVerifier);
   const digest = await window.crypto.subtle.digest('SHA-256', data);
   return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))
@@ -53,19 +54,20 @@ export const generateCodeChallenge = async (codeVerifier: string) => {
     .replace(/=+$/, '');
 }
 
-export const fetchAccessToken = async (code: string, codeVerifier: string) => {
-  const params = {
-    client_id: CLIENT_ID,
-    grant_type: "authorization_code",
-    code,
-    redirect_uri: REDIRECT_URL,
-    code_verifier: codeVerifier!,
-  };
+export const fetchAccessToken = async (code: string) => {
+  const verifier = localStorage.getItem(CODE_VERIFIER_KEY);
+
+  const params = new URLSearchParams();
+  params.append("client_id", CLIENT_ID);
+  params.append("grant_type", "authorization_code");
+  params.append("code", code);
+  params.append("redirect_uri", REDIRECT_URL);
+  params.append("code_verifier", verifier!);
 
   const result = await fetch(FETCH_ACCESS_TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams(params),
+    body: params
   });
 
   const { access_token } = await result.json();
