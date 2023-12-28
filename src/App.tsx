@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken, fetchUserProfile } from './spotify/SpotifyService';
+import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken, fetchUserProfile } from './spotify/SpotifyService'
 
 const App: React.FC = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
