@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken, fetchUserProfile } from './spotify/SpotifyService';
 
 const App: React.FC = () => {
-  console.log('App render');
-
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
