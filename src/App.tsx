@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken } from './spotify/SpotifyService';
+import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken, fetchUserProfile } from './spotify/SpotifyService';
 
 const App: React.FC = () => {
   console.log('App render');
 
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  // const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     // If being redirected back from Spotify with a code, fetch the access token
@@ -24,19 +24,20 @@ const App: React.FC = () => {
       setAccessToken(token);
     }
 
-    // if (accessToken && !userProfile) {
-    //   getUserProfile(accessToken)
-    //     .then((data) => setUserProfile(data))
-    //     .catch((error) => {
-    //       console.error('Error fetching profile: ', error);
-    //       // redirectToAuthorizeUrl()
-    //     });
-    // }
-  }, []);
+    if (accessToken && !userProfile) {
+      fetchUserProfile(accessToken)
+        .then((data) => setUserProfile(data))
+        .catch((error) => {
+          console.error('Error fetching profile: ', error);
+          // redirectToAuthorizeUrl()
+        });
+    }
+  }, [accessToken, userProfile]);
 
   return (
     <div>
       <h2>Access token: {accessToken}</h2>
+      <h2>User name: {userProfile?.display_name}</h2>
     </div>
   );
 }
