@@ -8,9 +8,9 @@ const App: React.FC = () => {
 
   // If being redirected back from Spotify with a code, fetch the access token
   const params = new URLSearchParams(window.location.search);
-  const code = params.get("code");
-  if (code) {
-    fetchAccessToken(code)
+  const codeParam = params.get("code");
+  if (codeParam) {
+    fetchAccessToken(codeParam)
       .then((token) => { if (token) { localStorage.setItem(ACCESS_TOKEN_KEY, token) } })
       .catch((error) => console.error('Error fetching access token: ', error));
   }
@@ -31,7 +31,7 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <h2>Code: {code}, Access token: {accessToken}</h2>
+      <h2>Code: {codeParam}, Access token: {accessToken}</h2>
     </div>
   );
 };
