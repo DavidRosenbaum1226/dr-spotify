@@ -31,7 +31,7 @@ const App: React.FC = () => {
         .then((data) => setUserProfile(data))
         .catch((error) => {
           console.error('Error fetching profile: ', error);
-          // redirectToAuthorizeUrl()
+          redirectToAuthorizeUrl()
         });
     }
   }, [accessToken, userProfile]);
