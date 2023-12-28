@@ -21,7 +21,7 @@ export const redirectToAuthorizeUrl = (): void => {
     params.append("code_challenge_method", "S256");
     params.append("code_challenge", challenge);
 
-    document.location = `${AUTHORIZE_URL}?${params.toString()}`;
+    window.location.href = `${AUTHORIZE_URL}?${params.toString()}`;
   });
 }
 

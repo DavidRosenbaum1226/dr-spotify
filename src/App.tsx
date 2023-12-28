@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken, fetchUserProfile } from './spotify/SpotifyService';
 
 const App: React.FC = () => {
@@ -8,11 +8,15 @@ const App: React.FC = () => {
   useEffect(() => {
     // If being redirected back from Spotify with a code, fetch the access token
     const params = new URLSearchParams(window.location.search);
-    const codeParam = params.get("code");
-    if (codeParam) {
-      fetchAccessToken(codeParam)
-        .then((token) => { if (token) { localStorage.setItem(ACCESS_TOKEN_KEY, token) } })
-        .catch((error) => console.error('Error fetching access token: ', error));
+    const code = params.get("code");
+    if (code) {
+      fetchAccessToken(code).then((token) => {
+        if (token) {
+          localStorage.setItem(ACCESS_TOKEN_KEY, token)
+          // Redirect to remove the code from the URL
+          window.location.href = window.location.origin;
+        }
+      }).catch((error) => console.error('Error fetching access token: ', error));
     }
 
     const token = localStorage.getItem(ACCESS_TOKEN_KEY);
