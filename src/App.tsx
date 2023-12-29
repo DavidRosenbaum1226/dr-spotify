@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken, fetchUserProfile } from './spotify/SpotifyService'
+import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken, fetchUserProfile } from './spotify/SpotifyService';
 
 const App: React.FC = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -12,7 +12,7 @@ const App: React.FC = () => {
     if (code) {
       fetchAccessToken(code).then((token) => {
         if (token) {
-          localStorage.setItem(ACCESS_TOKEN_KEY, token)
+          localStorage.setItem(ACCESS_TOKEN_KEY, token);
           // Redirect to remove the code from the URL
           window.location.href = window.location.origin;
         }
