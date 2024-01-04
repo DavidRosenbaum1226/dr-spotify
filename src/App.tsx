@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken, fetchUserProfile } from './spotify/SpotifyService';
+import Button from '@mui/material/Button';
 
 const App: React.FC = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -38,8 +39,7 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <h2>Access token: {accessToken}</h2>
-      <h2>User name: {userProfile?.display_name}</h2>
+      <Button variant="contained">Hello {userProfile?.display_name}</Button>
     </div>
   );
 }
