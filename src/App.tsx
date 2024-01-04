@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken, fetchUserProfile } from './spotify/SpotifyService';
 import Button from '@mui/material/Button';
+import Grid from '@mui/material/Unstable_Grid2';
 
 const App: React.FC = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -38,9 +39,9 @@ const App: React.FC = () => {
   }, [accessToken, userProfile]);
 
   return (
-    <div>
+    <Grid>
       <Button variant="contained">Hello {userProfile?.display_name}</Button>
-    </div>
+    </Grid>
   );
 }
 
