@@ -1,48 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { ACCESS_TOKEN_KEY, redirectToAuthorizeUrl, fetchAccessToken, fetchUserProfile } from './spotify/SpotifyService';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Unstable_Grid2';
+import { useSpotify } from './hooks/useSpotify';
+import { Scopes, SearchResults, SpotifyApi } from "@spotify/web-api-ts-sdk";
+import { useEffect, useState } from 'react'
+import './App.css'
 
-const App: React.FC = () => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+function App() {
+  
+  const sdk = useSpotify(
+    import.meta.env.VITE_SPOTIFY_CLIENT_ID, 
+    import.meta.env.VITE_REDIRECT_TARGET, 
+    Scopes.userDetails
+  );
+
+  return sdk
+    ? (<SpotifySearch sdk={sdk} />) 
+    : (<></>);
+}
+
+function SpotifySearch({ sdk }: { sdk: SpotifyApi}) {
+  const [results, setResults] = useState<SearchResults<["artist"]>>({} as SearchResults<["artist"]>);
 
   useEffect(() => {
-    // If being redirected back from Spotify with a code, fetch the access token
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get("code");
-    if (code) {
-      fetchAccessToken(code).then((token) => {
-        if (token) {
-          localStorage.setItem(ACCESS_TOKEN_KEY, token);
-          // Redirect to remove the code from the URL
-          window.location.href = window.location.origin;
-        }
-      }).catch((error) => console.error('Error fetching access token: ', error));
-    }
+    (async () => {
+      const results = await sdk.search("The Beatles", ["artist"]);
+      setResults(() => results);      
+    })();
+  }, [sdk]);
 
-    const token = localStorage.getItem(ACCESS_TOKEN_KEY);
-    if (!token) {
-      redirectToAuthorizeUrl();
-    } else {
-      setAccessToken(token);
-    }
-
-    if (accessToken && !userProfile) {
-      fetchUserProfile(accessToken)
-        .then((data) => setUserProfile(data))
-        .catch((error) => {
-          console.error('Error fetching profile: ', error);
-          redirectToAuthorizeUrl()
-        });
-    }
-  }, [accessToken, userProfile]);
+  // generate a table for the results
+  const tableRows = results.artists?.items.map((artist) => {
+    return (
+      <tr key={artist.id}>
+        <td>{artist.name}</td>
+        <td>{artist.popularity}</td>
+        <td>{artist.followers.total}</td>
+      </tr>
+    );
+  });
 
   return (
-    <Grid>
-      <Button variant="contained">Hello {userProfile?.display_name}</Button>
-    </Grid>
-  );
+    <>
+      <h1>Spotify Search for The Beatles</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Popularity</th>
+            <th>Followers</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tableRows}
+        </tbody>
+      </table>
+    </>
+  )
 }
 
 export default App;
