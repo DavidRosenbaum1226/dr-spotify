@@ -3,7 +3,6 @@ import { useSpotify } from './hooks/useSpotify';
 import { Scopes, SearchResults, SpotifyApi, UserProfile } from "@spotify/web-api-ts-sdk";
 import { AppBar, Avatar, Box, Stack } from '@mui/material';
 import './App.css'
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 
 const App = () => {
 
