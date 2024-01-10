@@ -4,25 +4,25 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
-  
+
   const sdk = useSpotify(
-    import.meta.env.VITE_SPOTIFY_CLIENT_ID, 
-    import.meta.env.VITE_REDIRECT_TARGET, 
+    import.meta.env.VITE_SPOTIFY_CLIENT_ID,
+    import.meta.env.VITE_REDIRECT_TARGET,
     Scopes.userDetails
   );
 
   return sdk
-    ? (<SpotifySearch sdk={sdk} />) 
+    ? (<SpotifySearch sdk={sdk} />)
     : (<></>);
 }
 
-function SpotifySearch({ sdk }: { sdk: SpotifyApi}) {
+function SpotifySearch({ sdk }: { sdk: SpotifyApi }) {
   const [results, setResults] = useState<SearchResults<["artist"]>>({} as SearchResults<["artist"]>);
 
   useEffect(() => {
     (async () => {
       const results = await sdk.search("The Beatles", ["artist"]);
-      setResults(() => results);      
+      setResults(() => results);
     })();
   }, [sdk]);
 
