@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useSpotify } from './hooks/useSpotify';
 import { Scopes, SearchResults, SpotifyApi, UserProfile } from "@spotify/web-api-ts-sdk";
-import Grid from '@mui/material/Unstable_Grid2';
+import { AppBar, Avatar, Box, Stack } from '@mui/material';
 import './App.css'
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
 
 const App = () => {
 
@@ -16,10 +17,10 @@ const App = () => {
 }
 
 const UI = ({ sdk }: { sdk: SpotifyApi }) => (
-  <Grid>
+  <Stack>
     <Header sdk={sdk} />
     <SpotifySearch sdk={sdk} />
-  </Grid>
+  </Stack>
 )
 
 const Header = ({ sdk }: { sdk: SpotifyApi }) => {
@@ -33,10 +34,12 @@ const Header = ({ sdk }: { sdk: SpotifyApi }) => {
   }, [sdk]);
 
   return (
-    <>
-      <h1>Spotify Web API TypeScript SDK Demo</h1>
-      <p>Logged in as: {userProfile?.display_name}</p>
-    </>
+    <AppBar>
+      <Stack direction="row">
+        <Avatar sx={{ m: 0.5 }} alt={userProfile?.display_name} src={userProfile?.images[0]?.url} />
+        <Box sx={{ m: 0.5 }}>{userProfile?.display_name}</Box>
+      </Stack>
+    </AppBar>
   );
 }
 
@@ -45,7 +48,7 @@ const SpotifySearch = ({ sdk }: { sdk: SpotifyApi }) => {
 
   useEffect(() => {
     (async () => {
-      const results = await sdk.search("The Beatles", ["artist"]);
+      const results = await sdk.search("Benatar", ["artist"]);
       setResults(() => results);
     })();
   }, [sdk]);
@@ -63,7 +66,7 @@ const SpotifySearch = ({ sdk }: { sdk: SpotifyApi }) => {
 
   return (
     <>
-      <h1>Spotify Search for The Beatles</h1>
+      <h1>Spotify Search for Benatar</h1>
       <table>
         <thead>
           <tr>
