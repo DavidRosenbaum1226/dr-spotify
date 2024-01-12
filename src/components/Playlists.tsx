@@ -10,9 +10,10 @@ const rows: GridRowsProp = [
 const columns: GridColDef[] = [
     { field: 'playlist', headerName: 'Playlist', width: 150 },
 ];
+
 export const Playlists = ({ sdk }: { sdk: SpotifyApi }) => {
     return (
-        <div style={{ height: '80vh', width: '40%', maxWidth: '100%' }}>
+        <div style={{ height: '100vh' }}>
             <DataGrid rows={rows} columns={columns} />
         </div>
     )

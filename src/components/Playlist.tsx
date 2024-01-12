@@ -14,7 +14,7 @@ const columns: GridColDef[] = [
 
 export const Playlist = ({ sdk }: { sdk: SpotifyApi }) => {
     return (
-        <div style={{ height: '80vh', width: '40%', maxWidth: '100%' }}>
+        <div style={{ height: '100vh' }}>
             <DataGrid rows={rows} columns={columns} />
         </div>
     )
