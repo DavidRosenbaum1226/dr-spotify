@@ -13,8 +13,8 @@ export const Header = ({ sdk }: { sdk: SpotifyApi }) => {
     }, [sdk]);
 
     return (
-        <Stack direction="row">
-            <Avatar sx={{ m: 0.5 }} alt={userProfile?.display_name} src={userProfile?.images[0]?.url} />
+        <Stack direction="row" alignItems="center">
+            <Avatar sx={{ m: 0.5, ml: 2 }} alt={userProfile?.display_name} src={userProfile?.images[0]?.url} />
             <Box sx={{ m: 0.5 }}>{userProfile?.display_name}</Box>
         </Stack>
     );
