@@ -5,7 +5,6 @@ import { Header } from './components/Header.tsx';
 import { Playlists } from './components/Playlists.tsx';
 import { Playlist } from './components/Playlist.tsx';
 import { Song } from './components/Song.tsx';
-import './App.css';
 
 const App = () => {
   const sdk = useSpotify(
