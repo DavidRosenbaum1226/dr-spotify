@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 import { useSpotify } from './hooks/useSpotify';
 import { Scopes, SearchResults, SpotifyApi, UserProfile } from "@spotify/web-api-ts-sdk";
 import { AppBar, Avatar, Box, Stack } from '@mui/material';
-import './App.css'
+import './App.css';
+import { Playlists } from './components/Playlists.tsx';
 
 const App = () => {
-
   const sdk = useSpotify(
     import.meta.env.VITE_SPOTIFY_CLIENT_ID,
     import.meta.env.VITE_REDIRECT_TARGET,
@@ -18,7 +18,10 @@ const App = () => {
 const UI = ({ sdk }: { sdk: SpotifyApi }) => (
   <Stack>
     <Header sdk={sdk} />
-    <SpotifySearch sdk={sdk} />
+    <Stack direction="row">
+      <Playlists sdk={sdk} />
+      <SpotifySearch sdk={sdk} />
+    </Stack>
   </Stack>
 )
 
@@ -65,7 +68,7 @@ const SpotifySearch = ({ sdk }: { sdk: SpotifyApi }) => {
 
   return (
     <>
-      <h1>Spotify Search for Benatar</h1>
+      <h3>Spotify Search for Benatar</h3>
       <table>
         <thead>
           <tr>
