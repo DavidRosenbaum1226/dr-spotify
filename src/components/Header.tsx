@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { SpotifyApi, UserProfile } from "@spotify/web-api-ts-sdk";
-import { AppBar, Avatar, Box } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 
 export const Header = ({ sdk }: { sdk: SpotifyApi }) => {
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
@@ -13,9 +13,9 @@ export const Header = ({ sdk }: { sdk: SpotifyApi }) => {
     }, [sdk]);
 
     return (
-        <AppBar>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
             <Avatar sx={{ m: 0.5, ml: 2 }} alt={userProfile?.display_name} src={userProfile?.images[0]?.url} />
-            <Box sx={{ m: 0.5 }}>{userProfile?.display_name}</Box>
-        </AppBar>
+            <Typography variant="body1" sx={{ ml: 1 }}>{userProfile?.display_name}</Typography>
+        </Box>
     );
 }
