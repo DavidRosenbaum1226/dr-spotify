@@ -25,6 +25,8 @@ export const UserPlaylists = ({ sdk }: { sdk: SpotifyApi }) => {
         <>
             <DataGrid
                 paginationMode="server"
+                pageSizeOptions={[5, 10, 25]}
+                autoPageSize
                 rowCount={userPlaylistCount}
                 rows={userPlaylistPageRows}
                 columns={columns} />
