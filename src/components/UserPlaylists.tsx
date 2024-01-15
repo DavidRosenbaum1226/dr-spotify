@@ -1,4 +1,5 @@
-import { SpotifyApi } from "@spotify/web-api-ts-sdk";
+import { useEffect, useState } from "react";
+import { Page, SimplifiedPlaylist, SpotifyApi } from "@spotify/web-api-ts-sdk";
 import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
 
 const rows: GridRowsProp = [
@@ -23,10 +24,19 @@ const columns: GridColDef[] = [
     { field: 'playlist', headerName: 'Playlist', width: 150 },
 ];
 
-export const Playlists = ({ sdk }: { sdk: SpotifyApi }) => {
+export const UserPlaylists = ({ sdk }: { sdk: SpotifyApi }) => {
+    const [userPlaylistPage, setUserPlaylistPage] = useState<Page<SimplifiedPlaylist> | null>(null);
+
+    useEffect(() => {
+        (async () => {
+            const userPlaylists = await sdk.currentUser.playlists.playlists(0);
+            setUserPlaylistPage(() => userPlaylists);
+        })();
+    }, [sdk]);
+
     return (
         <>
-            <DataGrid rows={rows} columns={columns} />
+            <DataGrid paginationMode='server' rows={rows} columns={columns} />
         </>
     )
 }

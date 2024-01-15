@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Card, CardContent, Typography } from "@mui/material";
 import { SpotifyApi } from "@spotify/web-api-ts-sdk";
+import { Card, CardContent, Typography } from "@mui/material";
 
 export const Song = ({ sdk }: { sdk: SpotifyApi }) => {
     // const [results, setResults] = useState<SearchResults<["artist"]>>({} as SearchResults<["artist"]>);

@@ -2,7 +2,7 @@ import { Scopes } from "@spotify/web-api-ts-sdk";
 import { useSpotify } from './hooks/useSpotify';
 import { Stack } from '@mui/material';
 import { Header } from './components/Header.tsx';
-import { Playlists } from './components/Playlists.tsx';
+import { UserPlaylists } from './components/UserPlaylists.tsx';
 import { Playlist } from './components/Playlist.tsx';
 import { Song } from './components/Song.tsx';
 
@@ -17,7 +17,7 @@ const App = () => {
     <Stack>
       <Header sdk={sdk} />
       <Stack direction="row">
-        <Playlists sdk={sdk} />
+        <UserPlaylists sdk={sdk} />
         <Playlist sdk={sdk} />
         <Song sdk={sdk} />
       </Stack>
