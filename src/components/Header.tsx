@@ -8,7 +8,7 @@ export const Header = ({ sdk }: { sdk: SpotifyApi }) => {
     useEffect(() => {
         (async () => {
             const userProfile = await sdk.currentUser.profile();
-            setUserProfile(() => userProfile);
+            setUserProfile(userProfile);
         })();
     }, [sdk]);
 
