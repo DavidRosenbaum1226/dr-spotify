@@ -7,15 +7,17 @@ import { Playlist } from './components/Playlist.tsx';
 import { Song } from './components/Song.tsx';
 
 const App = () => {
+  const scopes = Scopes.userDetails;
+
   const sdk = useSpotify(
     import.meta.env.VITE_SPOTIFY_CLIENT_ID,
     import.meta.env.VITE_REDIRECT_TARGET,
-    Scopes.userDetails
+    scopes
   );
 
   return sdk ? (
     <Stack>
-      <Header sdk={sdk} />
+      <Header sdk={sdk} scopes={scopes} />
       <Stack direction="row">
         <UserPlaylists sdk={sdk} />
         <Playlist sdk={sdk} />
