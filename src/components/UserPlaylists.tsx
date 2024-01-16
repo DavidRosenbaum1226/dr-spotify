@@ -3,7 +3,7 @@ import { MaxInt, SpotifyApi } from "@spotify/web-api-ts-sdk";
 import { DataGrid, GridColDef, GridPaginationModel, GridValidRowModel } from "@mui/x-data-grid";
 
 const columns: GridColDef[] = [
-    { field: "playlist", headerName: "Playlist", width: 150 },
+    { field: "playlist", headerName: "Playlist", width: 300 },
 ];
 
 export const UserPlaylists = ({ sdk }: { sdk: SpotifyApi }) => {
