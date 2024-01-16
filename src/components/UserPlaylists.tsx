@@ -12,7 +12,7 @@ export const UserPlaylists = ({ sdk }: { sdk: SpotifyApi }) => {
     const [userPlaylistPageRows, setUserPlaylistPageRows] = useState<GridValidRowModel[]>([]);
 
     const fetchPage = useCallback(async (model: GridPaginationModel) => {
-        const userPlaylists = await sdk.currentUser.playlists.playlists(model.page as MaxInt<50>, model.pageSize);
+        const userPlaylists = await sdk.currentUser.playlists.playlists(model.pageSize as MaxInt<50>, model.page * model.pageSize);
         setUserPlaylistCount(userPlaylists.total);
         setUserPlaylistPageRows(userPlaylists.items.map(item => ({
             id: item.id,
