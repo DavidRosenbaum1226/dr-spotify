@@ -7,7 +7,7 @@ import { Playlist } from './components/Playlist.tsx';
 import { Song } from './components/Song.tsx';
 
 const App = () => {
-  const scopes = Scopes.userDetails;
+  const scopes = Scopes.all;
 
   const sdk = useSpotify(
     import.meta.env.VITE_SPOTIFY_CLIENT_ID,
