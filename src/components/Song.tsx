@@ -3,15 +3,6 @@ import { SpotifyApi } from "@spotify/web-api-ts-sdk";
 import { Card, CardContent, Typography } from "@mui/material";
 
 export const Song = ({ sdk }: { sdk: SpotifyApi }) => {
-    // const [results, setResults] = useState<SearchResults<["artist"]>>({} as SearchResults<["artist"]>);
-
-    // useEffect(() => {
-    //     (async () => {
-    //         const results = await sdk.search("Benatar", ["artist"]);
-    //         setResults(() => results);
-    //     })();
-    // }, [sdk]);
-
     const [songInfo] = useState({
         name: "Song Name",
         artist: "Artist Name",
